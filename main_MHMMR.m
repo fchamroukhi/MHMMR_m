@@ -1,4 +1,4 @@
-% Segmentation of multivariate time series with a Multiple Hidden Markov Model Regression MHMMR).
+% Segmentation of multivariate time series with a Multiple Hidden Markov Model Regression (MHMMR).
 %
 %
 % Multiple Hidden Markov Model Regression (HMMR) for the segmentation of multivariate time series
