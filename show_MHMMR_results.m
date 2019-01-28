@@ -74,7 +74,7 @@ plot(x,y,'Color',[0.5 0.5 0.5], 'linewidth',2);%black')%
 [~, K] = size(MHMMR.stats.tau_tk);
 for k=1:K
     model_k = MHMMR.stats.regressors(:,:,k);
-     
+    
     active_model_k = model_k(MHMMR.stats.klas==k,:);%prob_model_k >= prob);
     active_period_model_k = x(MHMMR.stats.klas==k);%prob_model_k >= prob);
     

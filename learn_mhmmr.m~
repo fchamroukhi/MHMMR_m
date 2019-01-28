@@ -51,34 +51,60 @@ function mhmmr = learn_mhmmr(x, y, K, p,...
 %           smoothed: [nx1]
 %
 %
-%Faicel Chamroukhi, sept 2008
+%Faicel Chamroukhi, sept 2008 
 %
 %% Please cite the following papers for this code:
 %
-%
-%
+% 
 % @article{Chamroukhi-FDA-2018,
-%  	Journal = {Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery},
-%  	Author = {Faicel Chamroukhi and Hien D. Nguyen},
-%  	Note = {DOI: 10.1002/widm.1298.},
-%  	Volume = {},
-%  	Title = {Model-Based Clustering and Classification of Functional Data},
-%  	Year = {2019},
-%  	Month = {to appear},
-%  	url =  {https://chamroukhi.com/papers/MBCC-FDA.pdf}
-% }
-%
-% @article{Chamroukhi-MHMMR-2013,
-% 	Author = {Trabelsi, D. and Mohammed, S. and Chamroukhi, F. and Oukhellou, L. and Amirat, Y.},
-% 	Journal = {IEEE Transactions on Automation Science and Engineering},
-% 	Number = {10},
-% 	Pages = {829--335},
-% 	Title = {An unsupervised approach for automatic activity recognition based on Hidden Markov Model Regression},
-% 	Volume = {3},
-% 	Year = {2013},
-% 	url  = {https://chamroukhi.com/papers/Chamroukhi-MHMMR-IeeeTase.pdf}
+% 	Journal = {Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery},
+% 	Author = {Faicel Chamroukhi and Hien D. Nguyen},
+% 	Note = {DOI: 10.1002/widm.1298.},
+% 	Volume = {},
+% 	Title = {Model-Based Clustering and Classification of Functional Data},
+% 	Year = {2019},
+% 	Month = {to appear},
+% 	url =  {https://chamroukhi.com/papers/MBCC-FDA.pdf}
 % 	}
-%
+% 
+% @InProceedings{Chamroukhi-IJCNN-2011,
+%   author = {F. Chamroukhi and A. Sam\'e  and P. Aknin and G. Govaert},
+%   title = {Model-based clustering with Hidden Markov Model regression for time series with regime changes},
+%   Booktitle = {Proceedings of the International Joint Conference on Neural Networks (IJCNN), IEEE},
+%   Pages = {2814--2821},
+%   Adress = {San Jose, California, USA},
+%   year = {2011},
+%   month = {Jul-Aug},
+%   url = {https://chamroukhi.com/papers/Chamroukhi-ijcnn-2011.pdf}
+% }
+% 
+% @INPROCEEDINGS{Chamroukhi-IJCNN-2009,
+%   AUTHOR =       {Chamroukhi, F. and Sam\'e,  A. and Govaert, G. and Aknin, P.},
+%   TITLE =        {A regression model with a hidden logistic process for feature extraction from time series},
+%   BOOKTITLE =    {International Joint Conference on Neural Networks (IJCNN)},
+%   YEAR =         {2009},
+%   month = {June},
+%   pages = {489--496},
+%   Address = {Atlanta, GA},
+%  url = {https://chamroukhi.com/papers/chamroukhi_ijcnn2009.pdf},
+%  slides = {./conf-presentations/presentation_IJCNN2009}
+% }
+% 
+% @article{chamroukhi_et_al_NN2009,
+% 	Address = {Oxford, UK, UK},
+% 	Author = {Chamroukhi, F. and Sam\'{e}, A. and Govaert, G. and Aknin, P.},
+% 	Date-Added = {2014-10-22 20:08:41 +0000},
+% 	Date-Modified = {2014-10-22 20:08:41 +0000},
+% 	Journal = {Neural Networks},
+% 	Number = {5-6},
+% 	Pages = {593--602},
+% 	Publisher = {Elsevier Science Ltd.},
+% 	Title = {Time series modeling by a regression approach based on a latent process},
+% 	Volume = {22},
+% 	Year = {2009},
+% 	url  = {https://chamroukhi.users.lmno.cnrs.fr/papers/Chamroukhi_Neural_Networks_2009.pdf}
+% 	}
+% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 warning off
 
@@ -127,7 +153,11 @@ while (nb_good_try < total_EM_tries)
     Mask = mhmmr.stats.Mask;
     
     betak = mhmmr.reg_param.betak;
-    sigmak = mhmmr.reg_param.sigmak;
+    if homoskedastic
+        sigma = mhmmr.reg_param.sigma ;
+    else
+        sigmak = mhmmr.reg_param.sigmak;
+    end
     
     %
     iter = 0;
@@ -147,7 +177,13 @@ while (nb_good_try < total_EM_tries)
         % observation likelihoods
         for k=1:K
             mk = X*betak(:,:,k);  % the regressors means
-            if homoskedastic; sk = sigmak ;  else; sk = sigmak(:,:,k);end
+            if homoskedastic; sk = sigma ;  else; sk = sigmak(:,:,k);end
+            
+            
+            %z=((y - mk).^2)/sk;
+            %log_f_tk(:,k) =  -0.5*ones(m,1).*(log(2*pi)+log(sk)) - 0.5*z;%log(gaussienne)
+            
+                        
             z =((y-mk)*inv(sk)).*(y-mk);
             mahalanobis = sum(z,2);
             denom = (2*pi)^(d/2)*(det(sk))^(1/2);
@@ -181,13 +217,13 @@ while (nb_good_try < total_EM_tries)
             Xk = X.*(sqrt(weights)*ones(1,P));%[n*(p+1)]
             yk=  y.*(sqrt(weights)*ones(1,d));% dimension :(nxd).*(nxd) = (nxd)
             % reg coefficients
-            lambda = 1e-5;% if a bayesian prior on the beta's
+            lambda = 1e-9;% if a bayesian prior on the beta's
             bk = inv(Xk'*Xk + lambda*I)*Xk'*yk;
             betak(:,:,k) = bk;
             % covariance matrix
             z = (y-X*bk).*(sqrt(weights)*ones(1,d));
             sk = z'*z;
-            if homoskedastic, s = (s+sk); sigmak = s/m;else; sigmak(:,:,k) = sk/nk + lambda*eye(d);end
+            if homoskedastic, s = (s+sk); sigma = s/m;else; sigmak(:,:,k) = sk/nk;end
         end
         
         %% En of an EM iteration
@@ -201,7 +237,7 @@ while (nb_good_try < total_EM_tries)
         if prev_loglik-loglik > 1e-4
             top = top+1;
             if (top==10)
-            %    fprintf(1, '!!!!! The loglikelihood is decreasing from %6.4f to %6.4f!\n', prev_loglik, loglik);
+                %fprintf(1, '!!!!! The loglikelihood is decreasing from %6.4f to %6.4f!\n', prev_loglik, loglik);
                 break;
             end
         end
@@ -216,14 +252,20 @@ while (nb_good_try < total_EM_tries)
     mhmmr.prior = prior;
     mhmmr.trans_mat = trans_mat;
     mhmmr.reg_param.betak = betak;
-    
-    mhmmr.reg_param.sigmak = sigmak;
+    if homoskedastic
+        mhmmr.reg_param.sigma = sigma;
+    else
+        mhmmr.reg_param.sigmak = sigmak;
+    end
     
     % Estimated parameter vector (Pi,A,\theta)
-    parameter_vector=[prior(:); trans_mat(Mask~=0); betak(:);sigmak(:)];
-    %        nu = K-1 + K*(K-1) + K*(p+1) + K;%length(parameter_vector);%
-    nu = length(parameter_vector);
-    
+    if homoskedastic
+        parameter_vector=[prior(:); trans_mat(Mask~=0); betak(:);sigma(:)];
+        nu = K-1 + K*(K-1) + K*(p+1) + 1;%length(parameter_vector);%
+    else
+        parameter_vector=[prior(:); trans_mat(Mask~=0);betak(:); sigmak(:)];
+        nu = K-1 + K*(K-1) + K*(p+1) + K;%length(parameter_vector);%
+    end
     mhmmr.stats.nu = nu;
     mhmmr.stats.parameter_vector= parameter_vector;
     
@@ -312,29 +354,20 @@ predict_prob(1,:) = mhmmr.prior;%t=1 p (z_1)
 predict_prob(2:end,:) = (mhmmr.stats.alpha_tk(1:end-1,:)*mhmmr.trans_mat)./(sum(mhmmr.stats.alpha_tk(1:end-1,:), 2)*ones(1,K));%t =2,...,n
 mhmmr.stats.predict_prob = predict_prob;
 % predicted observations
-for k = 1:K
-    predicted(:,:,k) = (predict_prob(:,k)*ones(1,d)).*mhmmr.stats.regressors(:,:,k);%pond par les probas de prediction
+for k = 1:K    
+    predicted(:,:,k) = sum((predict_prob(:,k)*ones(1,d)).*mhmmr.stats.regressors(:,:,k),2);%pond par les probas de prediction
 end
 % mhmmr.stats.predicted = sum(predict_prob.*mhmmr.stats.regressors,3);%pond par les probas de prediction
-mhmmr.stats.predicted = sum(predicted, 3);%pond par les probas de prediction
 
 % filtering probs  = Pr(z_t|y_1,...,y_t)
-filter_prob = mhmmr.stats.alpha_tk./(sum(mhmmr.stats.alpha_tk, 2)*ones(1,K));%normalize(alpha_tk,2);
+filter_prob = mhmmr.stats.alpha_tk./(sum(mhmmr.stats.alpha_tk, 3)*ones(1,K));%normalize(alpha_tk,2);
 mhmmr.stats.filter_prob = filter_prob;
 % filetered observations
-for k = 1:K
-    filtered(:,:,k) = (filter_prob(:,k)*ones(1,d)).*mhmmr.stats.regressors(:,:,k);%pond par les probas de filtrage
-end
-% mhmmr.stats.filtered = sum(filter_prob.*mhmmr.stats.regressors, 3);%pond par les probas de filtrage
-mhmmr.stats.filtered = sum(filtered, 3);%pond par les probas de filtrage
+mhmmr.stats.filtered = sum(filter_prob.*mhmmr.stats.regressors, 3);%pond par les probas de filtrage
 
 %%% smoothed observations
-%mhmmr.stats.smoothed_regressors = (mhmmr.stats.tau_tk).*(mhmmr.stats.regressors);
-for k = 1:K
-    smoothed(:,:,k) = (mhmmr.stats.tau_tk(:,k)*ones(1,d)).*mhmmr.stats.regressors(:,:,k);%pond par les probas de filtrage
-end
-% mhmmr.stats.smoothed = sum(mhmmr.stats.smoothed_regressors, 3);
-mhmmr.stats.smoothed = sum(smoothed, 3);
+mhmmr.stats.smoothed_regressors = (mhmmr.stats.tau_tk).*(mhmmr.stats.regressors);
+mhmmr.stats.smoothed = sum(mhmmr.stats.smoothed_regressors, 3);
 
 
 

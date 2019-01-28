@@ -70,8 +70,8 @@ if  EM_try ==1% uniform segmentation into K contiguous segments, and then a regr
         muk = Xk*mhmmr_reg_param.betak(:,:,k);
         sk = (yk-muk)'*(yk-muk);
         if homoskedastic
-           s= (s+sk);
-           mhmmr_reg_param.sigmak = s/m;
+            s= (s+sk);
+            mhmmr_reg_param.sigmak = s/m;
         else
             mhmmr_reg_param.sigmak(:,:,k) = sk/length(yk);
         end
@@ -94,7 +94,7 @@ else % random segmentation into contiguous segments, and then a regression
     for k=1:K
         i = tk_init(k)+1;
         j = tk_init(k+1);
-        yk = y(i:j, :); 
+        yk = y(i:j, :);
         Xk = X(i:j,:);
         mhmmr_reg_param.betak(:,:,k) = inv(Xk'*Xk + 1e-4*eye(P))*Xk'*yk;%regress(yk,Xk); % for a use in octave, where regress doesnt exist
         muk = Xk* mhmmr_reg_param.betak(:,:,k);
@@ -102,7 +102,7 @@ else % random segmentation into contiguous segments, and then a regression
         
         if homoskedastic
             s = s+sk;
-             mhmmr_reg_param.sigmak = s/m;
+            mhmmr_reg_param.sigmak = s/m;
         else
             mhmmr_reg_param.sigmak(:,:,k) = sk/length(yk);%
         end
