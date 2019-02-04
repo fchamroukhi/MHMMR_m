@@ -9,11 +9,10 @@ Matlab/Octave code for the segmentation of multivariate time series with a Multi
  regime/state has multivariate Gaussian regressors emission densities.
  The model parameters are estimated by MLE via the EM algorithm
 
- Devoloped and written by Faicel Chamroukhi
 
  *Please cite the following papers for this code:*
 
-
+```
  @article{Chamroukhi-MHMMR-2013,
  	Author = {Trabelsi, D. and Mohammed, S. and Chamroukhi, F. and Oukhellou, L. and Amirat, Y.},
  	Journal = {IEEE Transactions on Automation Science and Engineering},
@@ -36,3 +35,6 @@ Matlab/Octave code for the segmentation of multivariate time series with a Multi
   	Month = {to appear},
   	url =  {https://chamroukhi.com/papers/MBCC-FDA.pdf}
  }
+
+``` 
+Devoloped and written by Faicel Chamroukhi
