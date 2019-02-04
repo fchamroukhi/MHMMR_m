@@ -31,7 +31,7 @@
 % 	Title = {An unsupervised approach for automatic activity recognition based on Hidden Markov Model Regression},
 % 	Volume = {3},
 % 	Year = {2013},
-% 	url  = {https://chamroukhi.com/papers/Chamroukhi-MHMMR-IeeeTase.pdf}
+% 	url  ={https://chamroukhi.com/papers/Chamroukhi-MHMMR-IeeeTase.pdf}
 % 	}
 %
 %

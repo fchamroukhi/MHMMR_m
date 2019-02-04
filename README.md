@@ -14,17 +14,6 @@ Matlab/Octave code for the segmentation of multivariate time series with a Multi
  *Please cite the following papers for this code:*
 
 
- @article{Chamroukhi-FDA-2018,
-  	Journal = {Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery},
-  	Author = {Faicel Chamroukhi and Hien D. Nguyen},
-  	Note = {DOI: 10.1002/widm.1298.},
-  	Volume = {},
-  	Title = {Model-Based Clustering and Classification of Functional Data},
-  	Year = {2019},
-  	Month = {to appear},
-  	url =  {https://chamroukhi.com/papers/MBCC-FDA.pdf}
- }
-
  @article{Chamroukhi-MHMMR-2013,
  	Author = {Trabelsi, D. and Mohammed, S. and Chamroukhi, F. and Oukhellou, L. and Amirat, Y.},
  	Journal = {IEEE Transactions on Automation Science and Engineering},
@@ -35,3 +24,15 @@ Matlab/Octave code for the segmentation of multivariate time series with a Multi
  	Year = {2013},
  	url  = {https://chamroukhi.com/papers/Chamroukhi-MHMMR-IeeeTase.pdf}
  	}
+
+
+ @article{Chamroukhi-FDA-2018,
+  	Journal = {Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery},
+  	Author = {Faicel Chamroukhi and Hien D. Nguyen},
+  	Note = {DOI: 10.1002/widm.1298.},
+  	Volume = {},
+  	Title = {Model-Based Clustering and Classification of Functional Data},
+  	Year = {2019},
+  	Month = {to appear},
+  	url =  {https://chamroukhi.com/papers/MBCC-FDA.pdf}
+ }
