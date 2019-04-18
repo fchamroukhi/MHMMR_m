@@ -60,10 +60,10 @@ type_algo = 'EM';
 %% toy multivariate time series with regime changes
 % y = [[randn(100,1); 7+randn(120,1);4+randn(200,1); -1+randn(100,1); 3.5+randn(150,1)] ...
 %     [1+randn(100,1); 5+randn(120,1);6+randn(200,1); -2+randn(100,1); 2+randn(150,1)] ...
-%     [-2+randn(100,1); 10+randn(120,1);8+randn(200,1); randn(100,1); 5+randn(150,1)]]
+%     [-2+randn(100,1); 10+randn(120,1);8+randn(200,1); randn(100,1); 5+randn(150,1)]];
 % n = length(y);
 % x = linspace(0,1,n);
-%
+% % 
 
 load simulated_time_series;
 % y = y(:,1)'; % to use it for a univariate time series
@@ -110,3 +110,6 @@ MHMMR = learn_mhmmr(x, y, K, p, type_variance, nbr_EM_tries, max_iter_EM, thresh
 % end
 
 show_MHMMR_results(x,y, MHMMR)
+figure, plot(MHMMR.stats.stored_loglik,'-o')
+xlabel('EM iteration')
+ylabel('log-likelihood')

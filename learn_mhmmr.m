@@ -182,7 +182,7 @@ while (nb_good_try < total_EM_tries)
             yk=  y.*(sqrt(weights)*ones(1,d));% dimension :(nxd).*(nxd) = (nxd)
             % reg coefficients
             lambda = 1e-5;% if a bayesian prior on the beta's
-            bk = inv(Xk'*Xk + lambda*I)*Xk'*yk;
+            bk = pinv(Xk'*Xk)*Xk'*yk;
             betak(:,:,k) = bk;
             % covariance matrix
             z = (y-X*bk).*(sqrt(weights)*ones(1,d));
